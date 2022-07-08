@@ -41,7 +41,7 @@ jobs:
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker buildx create --name mybuilder --driver docker-container --use
           docker buildx inspect --bootstrap
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_ID:$VERSION --push .
+          docker buildx build --build-arg DATABASE_TYPE=postgresql --platform linux/amd64,linux/arm64 -t $IMAGE_ID:$VERSION --push .
       - name: Slack Notification
         uses: homoluctus/slatify@v2.1.2
         if: always()
