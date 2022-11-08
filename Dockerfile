@@ -20,7 +20,7 @@ FROM node:16-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY --from=source /src/package.json /src/yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --network-timeout 600000
 
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
