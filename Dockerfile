@@ -2,12 +2,11 @@
 
 FROM --platform=${BUILDPLATFORM} alpine as source
 
-ENV VERSION=1.33.1
+ENV VERSION=1.39.4
 
 WORKDIR /tmp
 
-RUN FILENAME=goatcounter-dev-linux-${ARCH} && \
-    wget https://github.com/umami-software/umami/archive/refs/tags/v${VERSION}.tar.gz && \
+RUN wget https://github.com/umami-software/umami/archive/refs/tags/v${VERSION}.tar.gz && \
     tar -xvf v${VERSION}.tar.gz && \
     rm v${VERSION}.tar.gz && \
     mv /tmp/umami-${VERSION} /src
@@ -41,7 +40,7 @@ ENV DISABLE_LOGIN $DISABLE_LOGIN
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build
+RUN yarn build-docker
 
 # Production image, copy all the files and run next
 FROM node:16-alpine AS runner
@@ -53,8 +52,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-RUN yarn global add prisma
-RUN yarn add npm-run-all dotenv
+RUN yarn add npm-run-all dotenv prisma
 
 # You only need to copy next.config.js if you are NOT using the default configuration
 COPY --from=builder /app/next.config.js .
