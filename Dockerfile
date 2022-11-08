@@ -25,6 +25,8 @@ RUN yarn install --frozen-lockfile --network-timeout 600000
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
 WORKDIR /app
+RUN apk add --no-cache openssl
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=source /src .
 
@@ -53,6 +55,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 RUN yarn add npm-run-all dotenv prisma
+RUN apk add --no-cache openssl
 
 # You only need to copy next.config.js if you are NOT using the default configuration
 COPY --from=builder /app/next.config.js .
